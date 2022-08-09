@@ -1,0 +1,467 @@
+basePath: /api/v1
+definitions:
+  DownLoadVideoRequest:
+    properties:
+      name:
+        type: string
+    type: object
+  GetStudyRecordByTimeRequest:
+    properties:
+      end:
+        type: string
+      start:
+        type: string
+    required:
+    - end
+    - start
+    type: object
+  LoginByPhoneRequest:
+    properties:
+      password:
+        type: string
+      phone:
+        type: string
+    type: object
+  Response:
+    properties:
+      code:
+        type: integer
+      data: {}
+      message:
+        type: string
+    type: object
+  SignupUsingPhoneRequest:
+    properties:
+      gender:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      phone:
+        type: string
+    required:
+    - gender
+    - name
+    - password
+    - phone
+    type: object
+  UpdateCharacterRequest:
+    properties:
+      name:
+        type: string
+    type: object
+  UpdateCharacterStudyRequest:
+    properties:
+      cname:
+        type: string
+      uid:
+        type: integer
+    required:
+    - cname
+    - uid
+    type: object
+  UpdateName:
+    properties:
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  textproto.MIMEHeader:
+    additionalProperties:
+      items:
+        type: string
+      type: array
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a sample server celler server.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Swagger Example API
+  version: "1.0"
+paths:
+  /character/:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 请求中包含要上传的汉字的名称
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/UpdateCharacterRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Update Character In Database
+      tags:
+      - character
+  /default:
+    post:
+      consumes:
+      - application/json
+      description: use default characters
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Insert Default Characters in Database
+      tags:
+      - character
+  /name:
+    post:
+      consumes:
+      - application/json
+      description: update user name  by  token
+      parameters:
+      - description: Name--新昵称
+        in: body
+        name: '{object}'
+        required: true
+        schema:
+          $ref: '#/definitions/UpdateName'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Response'
+      summary: UpdateName
+      tags:
+      - auth
+  /password:
+    post:
+      consumes:
+      - application/json
+      description: update  user password by token 、 old password and new password
+      parameters:
+      - description: OldPassword--旧密码 || NewPassword--新密码
+        in: body
+        name: '{object}'
+        required: true
+        schema:
+          $ref: '#/definitions/SignupUsingPhoneRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Response'
+      summary: UpdatePassword
+      tags:
+      - user
+  /records:
+    get:
+      consumes:
+      - application/json
+      description: get user study records by token
+      parameters:
+      - description: JWT
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Show an account
+      tags:
+      - character
+    post:
+      consumes:
+      - application/json
+      description: cteate  by userId and post param
+      parameters:
+      - description: JWT
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 请求中包含要上传的汉字的名称
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/UpdateCharacterStudyRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Create  A User Study Records
+      tags:
+      - character
+  /records/limit:
+    get:
+      consumes:
+      - application/json
+      description: get user study records by start time and end time
+      parameters:
+      - description: JWT
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: StartTime-起始时间 EndTime --结束时间
+        in: body
+        name: '{object}'
+        required: true
+        schema:
+          $ref: '#/definitions/GetStudyRecordByTimeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Get user study records
+      tags:
+      - character
+  /records/num:
+    get:
+      consumes:
+      - application/json
+      description: get string by ID
+      parameters:
+      - description: JWT
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Show an account
+      tags:
+      - accounts
+  /signup/usingphone:
+    post:
+      consumes:
+      - application/json
+      description: get user study records by start time and end time
+      parameters:
+      - description: Phone--电话号码||Password-- 密码|| Name--昵称 || Gender--性别
+        in: body
+        name: '{object}'
+        required: true
+        schema:
+          $ref: '#/definitions/SignupUsingPhoneRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Sign up Using Phone
+      tags:
+      - auth
+  /usingphone:
+    post:
+      consumes:
+      - application/json
+      description: get user study records by start time and end time
+      parameters:
+      - description: Phone--电话号码 和Password--密码
+        in: body
+        name: '{object}'
+        required: true
+        schema:
+          $ref: '#/definitions/LoginByPhoneRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Login By Phone
+      tags:
+      - login
+  /video:
+    get:
+      consumes:
+      - application/json
+      description: Update  videos
+      parameters:
+      - description: Name--要下载的汉字 返回该汉字对应的视频的文件
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/DownLoadVideoRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Update  Videos
+      tags:
+      - download
+    post:
+      consumes:
+      - application/json
+      description: Update a video
+      parameters:
+      - in: formData
+        name: filename
+        type: string
+      - in: formData
+        name: size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Update a Video
+      tags:
+      - upload
+  /videos:
+    post:
+      consumes:
+      - application/json
+      description: Update  videos
+      parameters:
+      - in: formData
+        name: filename
+        type: string
+      - in: formData
+        name: size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Update  Videos
+      tags:
+      - upload
+swagger: "2.0"

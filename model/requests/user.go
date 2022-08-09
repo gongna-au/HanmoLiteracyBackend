@@ -9,7 +9,7 @@ type PaginationRequest struct {
 	Sort    string `valid:"sort" form:"sort"`
 	Order   string `valid:"order" form:"order"`
 	PerPage string `valid:"per_page" form:"per_page"`
-}
+} //@name PaginationRequest
 
 //验证函数
 func Pagination(data interface{}, c *gin.Context) map[string][]string {
@@ -44,7 +44,7 @@ func Pagination(data interface{}, c *gin.Context) map[string][]string {
 type UpdatePassword struct {
 	OldPassword string `valid:"old" json:"oldpassword,omitempty"`
 	NewPassword string `valid:"new" json:"newpassword,omitempty"`
-}
+} //@name UpdatePassword
 
 func UpdateUserPassword(data interface{}, c *gin.Context) map[string][]string {
 	rules := govalidator.MapData{
@@ -75,7 +75,7 @@ func UpdateUserPassword(data interface{}, c *gin.Context) map[string][]string {
 
 type UpdateName struct {
 	Name string `valid:"name" json:"name,omitempty" gorm:"column:name;" binding:"required"`
-}
+} //@name UpdateName
 
 func UpdateUserName(data interface{}, c *gin.Context) map[string][]string {
 	rules := govalidator.MapData{

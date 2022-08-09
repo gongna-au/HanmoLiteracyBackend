@@ -9,7 +9,7 @@ import (
 
 type SignupPhoneExistRequest struct {
 	Phone string `json:"phone" valid:"phone"`
-}
+} //@name SignupPhoneExistRequest
 
 func SignupPhoneExist(data interface{}, c *gin.Context) map[string][]string {
 	// 自定义验证规则
@@ -37,10 +37,10 @@ func SignupPhoneExist(data interface{}, c *gin.Context) map[string][]string {
 // SignupUsingPhoneRequest 通过手机注册的请求信息
 type SignupUsingPhoneRequest struct {
 	Phone    string `valid:"phone" json:"phone,omitempty" gorm:"column:phone;" binding:"required"`
-	Name     string `valid:"name" json:"name",omitempty gorm:"column:name;" binding:"required"`
+	Name     string `valid:"name" json:"name,omitempty" gorm:"column:name;" binding:"required"`
 	Password string `valid:"password" json:"password,omitempty" gorm:"column:password;" binding:"required"`
 	Gender   string `valid:"gender" json:"gender,omitempty" gorm:"column:gender;" binding:"required"`
-}
+} //@name SignupUsingPhoneRequest
 
 func SignupUsingPhone(data interface{}, c *gin.Context) map[string][]string {
 

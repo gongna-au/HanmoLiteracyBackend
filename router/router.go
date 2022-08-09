@@ -11,7 +11,17 @@ import (
 	"github.com/HanmoLiteracyBackend/handler/video"
 	"github.com/HanmoLiteracyBackend/middlewares"
 	"github.com/gin-gonic/gin"
+	ginSwagger "github.com/swaggo/gin-swagger"
+	"github.com/swaggo/gin-swagger/swaggerFiles"
 )
+
+var Router *gin.Engine
+
+func init() {
+	Router = gin.New()
+	Router.MaxMultipartMemory = 200 << 20 // 64 MiB
+
+}
 
 // SetupRoute 路由初始化
 func SetupRoute(router *gin.Engine) {
@@ -29,24 +39,24 @@ func SetupRoute(router *gin.Engine) {
 //注册全局中间件
 func registerGlobalMiddleWare(g *gin.Engine) {
 	g.Use(middlewares.Logger())
+	//g.Use(middlewares.Cors()) //开启中间件 允许使用跨域请求
 
 }
 
 //  注册 API 路由
 func RegisterAPIRoutes(g *gin.Engine) {
 
+	g.GET("swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	g1 := g.Group("/api/v1/upload")
 	{
 		g1.POST("/video", video.UpdateVideo)
 		g1.POST("/videos", video.UpdateVideos)
 
 	}
-
 	g2 := g.Group("/api/v1/auth")
 	{
 		//使用手机号和密码注册
 		g2.POST("/signup/usingphone", signup.SignupUsingPhone)
-
 	}
 
 	g3 := g.Group("/api/v1/login")
@@ -56,24 +66,21 @@ func RegisterAPIRoutes(g *gin.Engine) {
 	}
 	g4 := g.Group("/api/v1/user")
 	{
-		//修改用户信息
 		g4.POST("/password", user.UpdatePassword)
 		g4.POST("/name", user.UpdateName)
-		//注销用户
-		g4.DELETE("/", user.GetUsers)
-		//修改个人资料
 	}
 	g5 := g.Group("/api/v1/character")
 	{
-		//修改用户信息
 		g5.POST("/", character.UpdateCharacter)
 		g5.POST("/default", character.DefaultCharacterInit)
+		g5.POST("/records", character.UpdateStudyRecords)
+		g5.GET("/records/limit", character.GetStudyRecordsByTime)
+		g5.GET("/records/num", character.GetStudyRecordsNum)
 	}
 	g6 := g.Group("/api/v1/download")
 	{
-		//修改用户信息
+
 		g6.GET("/video", video.DownloadVideo)
-		g6.GET("/videos", video.DownloadVideos)
 	}
 }
 

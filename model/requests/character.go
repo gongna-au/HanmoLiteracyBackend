@@ -9,7 +9,7 @@ import (
 
 type UpdateCharacterRequest struct {
 	Name string `json:"name" valid:"name"`
-}
+} //@name UpdateCharacterRequest
 
 func UpdateCharacterExist(data interface{}, c *gin.Context) map[string][]string {
 	// 自定义验证规则
@@ -32,3 +32,13 @@ func UpdateCharacterExist(data interface{}, c *gin.Context) map[string][]string 
 
 	return govalidator.New(opts).ValidateStruct()
 }
+
+type UpdateCharacterStudyRequest struct {
+	UserId        int    `json:"uid" binding:"required"`
+	CharacterName string `json:"cname" binding:"required"`
+} //@name UpdateCharacterStudyRequest
+
+type GetStudyRecordByTimeRequest struct {
+	StartTime string `json:"start,omitempty" binding:"required"`
+	EndTime   string `json:"end,omitempty" binding:"required"`
+} //@name GetStudyRecordByTimeRequest

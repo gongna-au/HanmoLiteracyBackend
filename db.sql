@@ -27,18 +27,29 @@ primary key (`id`)
 -- 视频表(character)
 create table `tbl_video`(
    `id` int not null AUTO_INCREMENT comment "视频id" ,  
-   `path` varchar(100) null comment "视频文件路径",
-   `character_id` int null comment "对应的汉字 id",
+   `path` varchar(100) null comment "视频文件路径以及名称",
+-- 添加约束
+primary key (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
+
+
+-- 视频对应的汉字表(character)
+create table `tbl_video_records`(
+   `id`  int not null AUTO_INCREMENT comment "学习记录id" ,
+   `vid` int  null comment "视频id",
+   `cid` int  null comment "汉字id",
 -- 添加约束
 primary key (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 
 
 -- 学习信息表(character)
-create table `tbl_records`(
+create table `tbl_study_records`(
    `id` int not null AUTO_INCREMENT comment "学习记录id" ,
    `uid` int  null comment "用户id",
    `cid` int  null comment "汉字id",
+   `cname` varchar(20) null comment "汉字名称",
+   `time` varchar(20) null comment "时间",
 -- 添加约束
 primary key (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;

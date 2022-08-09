@@ -17,7 +17,20 @@ type UsersController struct {
 	handler.BaseAPIController
 }
 
-//CurrentUser 当前登录用户信息
+// ShowAccount godoc
+// @Summary      UpdatePassword
+// @Description  update  user password by token 、 old password and new password
+// @Tags         user
+// @Accept       json
+// @Produce      json
+// @Param        req  {object}  body requests.SignupUsingPhoneRequest  true  "OldPassword--旧密码 || NewPassword--新密码"
+// @Success      200  {object}  response.Response
+// @Failure      400  {object}  response.Response
+// @Failure      400  {object}  response.Response
+// @Failure      404  {object}  response.Response
+// @Failure      500  {object}  response.Response
+// @Router       /password   [post]
+// UpdatePassword   修改用户密码
 func UpdatePassword(c *gin.Context) {
 	// 1. 解析token
 	claim, err := jwt.NewJWT().ParserToken(c)
@@ -47,7 +60,7 @@ func UpdatePassword(c *gin.Context) {
 	user.Password = request.NewPassword
 	err = user.Save()
 	if err != nil {
-		response.BadRequest(c, err, "update password err")
+		response.Abort500(c, "update password in  database err")
 		return
 	}
 
@@ -55,7 +68,20 @@ func UpdatePassword(c *gin.Context) {
 
 }
 
-//UpdateName 用户信息
+// ShowAccount godoc
+// @Summary      UpdateName
+// @Description  update user name  by  token
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param        req  {object}  body requests.UpdateName   true  "Name--新昵称"
+// @Success      200  {object}  response.Response
+// @Failure      400  {object}  response.Response
+// @Failure      400  {object}  response.Response
+// @Failure      404  {object}  response.Response
+// @Failure      500  {object}  response.Response
+// @Router       /name    [post]
+//UpdateName 修改用户昵称
 func UpdateName(c *gin.Context) {
 	// 1. 解析token
 	claim, err := jwt.NewJWT().ParserToken(c)
@@ -78,7 +104,7 @@ func UpdateName(c *gin.Context) {
 	user.Name = request.Name
 	err = user.Save()
 	if err != nil {
-		response.BadRequest(c, err, "update name err")
+		response.Abort500(c, "update name in database err")
 		return
 	}
 	response.Success(c)

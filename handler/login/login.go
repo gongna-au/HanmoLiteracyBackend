@@ -21,6 +21,18 @@ type LoginController struct {
 	handler.BaseAPIController
 }
 
+// ShowAccount godoc
+// @Summary      Login By Phone
+// @Description  get user study records by start time and end time
+// @Tags         login
+// @Accept       json
+// @Produce      json
+// @Param        req  {object}  body requests.LoginByPhoneRequest  true  "Phone--电话号码 和Password--密码"
+// @Success      200  {object}  response.Response
+// @Failure      400  {object}  response.Response
+// @Failure      404  {object}  response.Response
+// @Failure      422  {object}  response.Response
+// @Router       /usingphone    [post]
 // LoginByPhone 手机登录
 func LoginByPhone(c *gin.Context) {
 

@@ -94,6 +94,9 @@ func (jwt *JWT) IssueToken(userID string, userName string) string {
 func TimenowInTimezone() time.Time {
 	return time.Now().Local()
 }
+func TimeToString(t time.Time) string {
+	return t.Format("2006-01-02 15:04:05")
+}
 
 // expireAtTime 过期时间
 func (jwt *JWT) expireAtTime() int64 {

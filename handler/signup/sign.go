@@ -21,6 +21,19 @@ type SignupController struct {
 	handler.BaseAPIController
 }
 
+// ShowAccount godoc
+// @Summary      Sign up Using Phone
+// @Description  get user study records by start time and end time
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param        req  {object}  body requests.SignupUsingPhoneRequest  true  "Phone--电话号码||Password-- 密码|| Name--昵称 || Gender--性别"
+// @Success      200  {object}  response.Response
+// @Failure      400  {object}  response.Response
+// @Failure      400  {object}  response.Response
+// @Failure      404  {object}  response.Response
+// @Failure      500  {object}  response.Response
+// @Router       /signup/usingphone    [post]
 // SignupUsingPhone 使用手机和密码进行注册
 func SignupUsingPhone(c *gin.Context) {
 

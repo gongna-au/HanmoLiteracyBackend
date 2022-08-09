@@ -3,26 +3,31 @@ package video
 import (
 	//"errors"
 	"fmt"
+	//"path"
 	//"io"
 	//"io"
 	//"io/ioutil"
 	//"net/http"
 	"os"
 	//"path"
-	"github.com/HanmoLiteracyBackend/handler"
+	//"github.com/HanmoLiteracyBackend/handler"
+	"strings"
 
 	//"github.com/HanmoLiteracyBackend/handler"
-	//"github.com/HanmoLiteracyBackend/model/character"
+	"github.com/HanmoLiteracyBackend/model/character"
 	"github.com/HanmoLiteracyBackend/model/requests"
 	"github.com/HanmoLiteracyBackend/model/response"
-	//"github.com/HanmoLiteracyBackend/model/video"
-	"errors"
-	"github.com/HanmoLiteracyBackend/pkg/jwt"
-	"github.com/gin-gonic/gin"
+
+	//"errors"
+	"github.com/HanmoLiteracyBackend/model/video"
 	mathrand "math/rand"
-	"mime/multipart"
+	multipart "mime/multipart"
 	"path/filepath"
 	"time"
+
+	"github.com/HanmoLiteracyBackend/pkg/jwt"
+	//"github.com/HanmoLiteracyBackend/router"
+	"github.com/gin-gonic/gin"
 )
 
 // fetchAllTodo 返回所有的 todo 数据
@@ -35,17 +40,25 @@ func FetchSingleVideo(c *gin.Context) {
 
 }
 
+// ShowAccount godoc
+// @Summary      Update a Video
+// @Description  Update a video
+// @Tags         upload
+// @Accept       json
+// @Produce      json
+// @Param        req  formData  multipart.FileHeader true "要上传的文件"
+// @Success      200  {object}  response.Response
+// @Failure      500  {object}  response.Response
+// @Router       /video    [post]
 // 上传单个视频
 func UpdateVideo(c *gin.Context) {
 	file, err := c.FormFile("file")
-	request := requests.UpdateVideoRequest{
-		Video: file,
-	}
+
 	if err != nil {
 		response.Abort500(c, "上传视频失败，请稍后尝试~")
 		return
 	}
-	_, err = SaveUploadVideo(c, request.Video)
+	_, err = SaveUploadVideo(c, file)
 	if err != nil {
 		response.Abort500(c, "上传视频失败，请稍后尝试~")
 		return
@@ -53,6 +66,17 @@ func UpdateVideo(c *gin.Context) {
 	response.Success(c)
 }
 
+// ShowAccount godoc
+// @Summary      Update  Videos
+// @Description  Update  videos
+// @Tags         upload
+// @Accept       json
+// @Produce      json
+// @Param        req  formData  multipart.FileHeader true "要上传的文件"
+// @Success      200  {object}  response.Response
+// @Failure      500  {object}  response.Response
+// @Router       /videos    [post]
+// 上传单个视频
 //上传很多视频
 func UpdateVideos(c *gin.Context) {
 	form, err := c.MultipartForm()
@@ -73,58 +97,38 @@ func UpdateVideos(c *gin.Context) {
 	response.Success(c)
 }
 
-//下载单个视频
+// ShowAccount godoc
+// @Summary      Update  Videos
+// @Description  Update  videos
+// @Tags         download
+// @Accept       json
+// @Produce      json
+// @Param        req   body  requests.DownLoadVideoRequest  true "Name--要下载的汉字 返回该汉字对应的视频的文件"
+// @Success      200  {object}  response.Response
+// @Failure      400  {object}  response.Response
+// @Failure      500  {object}  response.Response
+// @Router       /video    [get]
+// 下载单独的一个视频
 func DownloadVideo(c *gin.Context) {
-	//表单验证
 	request := requests.DownLoadVideoRequest{}
-	//requests.SignupUsingPhone 验证函数
-	if ok := handler.Validate(c, &request, requests.DownLoadVideo); !ok {
-		response.VerificationFailed(c, errors.New("请求格式不正确，下载失败"))
+	err := c.ShouldBind(&request)
+	charact, err := character.GetCharacterIdByName(request.Name)
+	if err != nil {
+		response.BadRequest(c, err)
 		return
 	}
-
-	form, err := c.MultipartForm()
+	vc, err := video.GetVideoByCharacterId(charact.BaseModel.ID)
 	if err != nil {
-		response.Abort500(c, "下载视频失败，请稍后尝试~")
-	}
-	// 获取所有视频
-	files := form.File["files"]
-	// 遍历所有视频
-	for _, file := range files {
-		// 逐个存
-		_, err = SaveUploadVideo(c, file)
-		if err != nil {
-			response.Abort500(c, "下载视频失败，请稍后尝试~")
-			return
-		}
-	}
-	response.Success(c)
-}
-
-//下载很多视频
-func DownloadVideos(c *gin.Context) {
-	request := requests.DownLoadVideosRequest{}
-	if ok := handler.Validate(c, &request, requests.DownLoadVideos); !ok {
-		response.VerificationFailed(c, errors.New("请求格式不正确,下载失败"))
+		response.BadRequest(c, err)
 		return
 	}
-
-	form, err := c.MultipartForm()
+	v, err := video.GetVideoName(vc.VideoId)
 	if err != nil {
-		response.Abort500(c, "下载视频失败，请稍后尝试~")
+		response.BadRequest(c, err)
+		return
 	}
-	// 获取所有视频
-	files := form.File["files"]
-	// 遍历所有视频
-	for _, file := range files {
-		// 逐个存
-		_, err = SaveUploadVideo(c, file)
-		if err != nil {
-			response.Abort500(c, "下载视频失败，请稍后尝试~")
-			return
-		}
-	}
-	response.Success(c)
+	//name := c.Param("name")
+	c.File("public/" + v.Path)
 }
 
 func SaveUploadVideo(c *gin.Context, file *multipart.FileHeader) (string, error) {
@@ -157,4 +161,26 @@ func RandomString(length int) string {
 		b[i] = letters[mathrand.Intn(len(letters))]
 	}
 	return string(b)
+}
+
+func GetPublicFilePath() string {
+	dir, _ := os.Getwd()
+	array := strings.Split(dir, "/")
+	fmt.Print(array)
+	sum := ""
+	for _, v := range array {
+		if v == "HanmoLiteracyBackend" {
+			sum = sum + v + "/"
+			break
+		} else {
+			sum = sum + v + "/"
+		}
+
+	}
+	sum = sum + "public/video/test.mp4"
+	return sum
+}
+func GetPath() string {
+	dir, _ := os.Getwd()
+	return dir
 }
